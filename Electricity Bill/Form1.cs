@@ -83,13 +83,22 @@ namespace Electricty_Bill
             int totalDays = (int) endDate.Subtract(startDate).TotalDays;
             txtTotalDays.Text = totalDays.ToString();
 
-            double amountSolar = GetBillAmount(energyFromGrid, energyToGrid, 0.4, 0.17, totalDays, 0.6788, 0.8213, 0.22);
-            double amountNoSolar = GetBillAmount(consumption, 0, 0.4, 0.17, totalDays, 0.6788, 0.8213, 0.22);
+            double rate = 0.36;
+            double feedIn = 0.17;
+            double supply = 0.8213;
+            double offPeakCostPerDay = 0.4877; //0.6788;  Winter rate
+            double discount = 0.22;
+
+            double amountSolar = GetBillAmount(energyFromGrid, energyToGrid, rate, feedIn, totalDays, offPeakCostPerDay, supply, discount);
+            double amountNoSolar = GetBillAmount(consumption, 0, rate, feedIn, totalDays, offPeakCostPerDay, supply, discount);
             double savings = amountNoSolar - amountSolar;
 
             txtAmount.Text = amountSolar.ToString("C2");
             txtAmountNoSolar.Text = amountNoSolar.ToString("C2");
             txtSavings.Text = savings.ToString("C2");
+
+            txtEnergyIn.Text = Convert.ToString(energyFromGrid / 1000);
+            txtEnergyOut.Text = Convert.ToString(energyToGrid / 1000);
 
         }
 
@@ -100,21 +109,34 @@ namespace Electricty_Bill
             energyOut = energyOut / 1000;
 
             //Work out our total cost of energy
-            double totalEnergyCost = energyIn * energyInCost - energyOut * energyOutCost;
+            double totalEnergyOut = energyIn * energyInCost;
 
             //Add on any extra costs per day such as off peak power
-            totalEnergyCost = totalEnergyCost + (totalDays * extraPerDay);
-
-            //Add on supply charges
-            totalEnergyCost = totalEnergyCost + (totalDays * supplyChargesPerDay);
+            totalEnergyOut = totalEnergyOut + (totalDays * extraPerDay);
 
             //Subtract any percentage savings
-            totalEnergyCost = totalEnergyCost - (totalEnergyCost * percentageSavings);
+            double savingsCredit = totalEnergyOut * percentageSavings;
+            //totalEnergyCost = totalEnergyCost - savingsCredit;
+
+            //Add on supply charges
+            double supplyCharges = totalDays * supplyChargesPerDay;
+            //totalEnergyCost = totalEnergyCost + supplyCharges;
+
+            //SUbtract the Feed in
+            double feedIn = energyOut * energyOutCost;
+            //totalEnergyCost = totalEnergyCost - (feedIn);
+
+            double totalAmount = totalEnergyOut - savingsCredit + supplyCharges - feedIn;
 
             //Apply 10% GST
-            totalEnergyCost = totalEnergyCost * 1.1;
+            //totalEnergyCost = totalEnergyCost * 1.1;
+            double gst = (totalEnergyOut + supplyCharges - savingsCredit) * 0.1;
+            return totalAmount + gst;
+        }
 
-            return totalEnergyCost;
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
