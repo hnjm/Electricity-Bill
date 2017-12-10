@@ -80,7 +80,7 @@ namespace Electricty_Bill
 
             txtDateFrom.Text = startDate.ToShortDateString();
             txtDateTo.Text = endDate.ToShortDateString();
-            int totalDays = (int) endDate.Subtract(startDate).TotalDays;
+            int totalDays = (int)endDate.Subtract(startDate).TotalDays + 1;
             txtTotalDays.Text = totalDays.ToString();
 
             double rate = 0.36;
