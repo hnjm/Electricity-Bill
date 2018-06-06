@@ -58,6 +58,7 @@
             // openFileDialog
             // 
             this.openFileDialog.Filter = "Excel files|*.xlsx|All files|*.*";
+            this.openFileDialog.InitialDirectory = "c:\\Users\\jlenon\\Downloads\\";
             // 
             // groupBox1
             // 
