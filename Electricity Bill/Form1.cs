@@ -17,7 +17,7 @@ namespace Electricty_Bill
         {
             InitializeComponent();
 
-            txtFile.Text = @"c:\Users\jlenon\Downloads\Jimmy_Lenon_09092017-06122017.xlsx";
+            txtFile.Text = @"c:\Users\jlenon\Downloads\Jimmy_Lenon_07032018-06062018.xlsx";
 
 
             txtDateFrom.Text = "";
@@ -137,6 +137,14 @@ namespace Electricty_Bill
         private void groupBox2_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                txtFile.Text = openFileDialog.FileName;
+            }
         }
     }
 }
